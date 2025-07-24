@@ -4,3 +4,4 @@ numpy==1.26.4
 scikit-learn==1.5.2
 category_encoders==2.6.4
 joblib==1.4.2
+plotly>=5.0.0

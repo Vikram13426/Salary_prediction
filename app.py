@@ -3,6 +3,18 @@ import pandas as pd
 import numpy as np
 import joblib
 from difflib import get_close_matches
+import plotly.express as px
+
+# Cache data loading for performance
+@st.cache_data
+def load_data():
+    try:
+        salary_df = pd.read_csv("Salary Data.csv")
+        unique_job_titles = sorted(salary_df["Job Title"].dropna().unique())
+        return salary_df, unique_job_titles
+    except Exception as e:
+        st.error(f"❌ Error loading dataset: {str(e)}")
+        st.stop()
 
 # Set page configuration
 st.set_page_config(page_title="💼 Smart Salary Estimator", page_icon="💰", layout="centered")
@@ -20,17 +32,12 @@ except Exception as e:
     st.stop()
 
 # Load dataset
-try:
-    salary_df = pd.read_csv("Salary Data.csv")
-    unique_job_titles = sorted(salary_df["Job Title"].dropna().unique())
-except Exception as e:
-    st.error(f"❌ Error loading dataset: {str(e)}")
-    st.stop()
+salary_df, unique_job_titles = load_data()
 
 # Header
 st.markdown("""
     <div style='text-align: center;'>
-        <h1 style='color:#2E86C1;'>💼 CompensAI – Smart Salary Estimator</h1>
+        <h1 style='color:#2E86C1;'>💼 Smart Salary Estimator</h1>
         <p style='font-size:18px;'>Enter your profile details to estimate your salary or compare with the market average.</p>
     </div>
 """, unsafe_allow_html=True)
@@ -51,11 +58,31 @@ with st.container():
 
     st.markdown("---")
 
-    col_btn1, col_btn2 = st.columns(2)
-    with col_btn1:
-        predict_button = st.button("🔮 Predict Salary")
-    with col_btn2:
-        avg_salary_button = st.button("📊 Get Average Salary")
+    # Center buttons with CSS
+    st.markdown("""
+    <style>
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .stButton > button {
+            width: 200px;
+            height: 40px;
+            font-size: 16px;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    with st.container():
+        st.markdown('<div class="button-container">', unsafe_allow_html=True)
+        col_btn1, col_btn2 = st.columns(2)
+        with col_btn1:
+            predict_button = st.button("🔮 Predict Salary")
+        with col_btn2:
+            avg_salary_button = st.button("📊 Get Average Salary")
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # Seniority Level function
 def get_seniority_level(title):
@@ -109,12 +136,16 @@ if predict_button:
             pred_log = model.predict(input_data)
             predicted_salary = np.expm1(pred_log)[0]
 
+            # Display prediction
             st.markdown(f"""
             <div style='text-align:center; margin-top:30px;'>
                 <h2 style='color:#28a745;'>🤑 Predicted Salary</h2>
                 <p style='font-size:36px; font-weight:bold;'>₹ {predicted_salary:,.2f} / month</p>
             </div>
             """, unsafe_allow_html=True)
+
+            
+
         except Exception as e:
             st.error(f"❌ Error: {str(e)}")
 
@@ -146,8 +177,36 @@ if avg_salary_button:
         except Exception as e:
             st.error(f"❌ Error: {str(e)}")
 
-# Footer
+# Feedback Form
+with st.container():
+    st.markdown("---")
+    st.subheader("📬 Feedback")
+    with st.form("feedback_form"):
+        name = st.text_input("Name (optional)")
+        feedback = st.text_area("Your Feedback or Suggestions")
+        submit_feedback = st.form_submit_button("Submit Feedback")
+        if submit_feedback:
+            if feedback:
+                st.success("✅ Thank you for your feedback!")
+                # In a production app, save feedback to a database or file
+            else:
+                st.error("⚠️ Please provide feedback before submitting.")
+
+# Footer with larger social media icons
 st.markdown("""
 <hr>
-<p style='text-align:center; color:gray;'>Built with ❤️ using <a href='https://streamlit.io/' target='_blank'>Streamlit</a></p>
+<div style='text-align:center; color:gray;'>
+    <p>Built by Vikram with ❤️ using <a href='https://streamlit.io/' target='_blank'>Streamlit</a></p>
+    <p>
+        <a href='https://www.linkedin.com/in/your-linkedin-profile' target='_blank'>
+            <img src='https://img.icons8.com/color/36/000000/linkedin.png' alt='LinkedIn' width='36' height='36'/>
+        </a>
+        <a href='https://github.com/your-github-profile' target='_blank'>
+            <img src='https://img.icons8.com/color/36/000000/github.png' alt='GitHub' width='36' height='36'/>
+        </a>
+        <a href='https://x.com/your-twitter-profile' target='_blank'>
+            <img src='https://img.icons8.com/color/36/000000/twitter.png' alt='Twitter' width='36' height='36'/>
+        </a>
+    </p>
+</div>
 """, unsafe_allow_html=True)

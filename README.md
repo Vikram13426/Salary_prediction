@@ -17,7 +17,12 @@ An interactive **Streamlit web application** that predicts and compares salaries
 
 ## 🖼️ Demo Preview
 
-*(Add screenshots of your app interface here)*
+<img width="951" height="835" alt="Screenshot 2025-07-24 162751" src="https://github.com/user-attachments/assets/3c6903c0-70ae-451f-87c3-552a1623b428" />
+<img width="966" height="860" alt="Screenshot 2025-07-24 163058" src="https://github.com/user-attachments/assets/5602964b-ee1e-4fba-98ac-cfaba1421d32" />
+<img width="860" height="793" alt="Screenshot 2025-07-24 163139" src="https://github.com/user-attachments/assets/93a97047-865c-4064-bed9-a7633d0695e9" />
+
+
+
 
 ```
 📌 Example:
